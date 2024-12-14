@@ -1,21 +1,27 @@
-# Project 3: Spots
+# Spots
 
-### Overview  
+An image sharing site
 
-* Intro  
-* Figma  
-* Images  
-  
-**Intro**
-  
-This project is made so all the elements are displayed correctly on popular screen sizes. We recommend investing more time in completing this project, since it's more difficult than previous ones.  
-  
-**Figma**  
-  
-* [Link to the project on Figma](https://www.figma.com/file/BBNm2bC3lj8QQMHlnqRsga/Sprint-3-Project-%E2%80%94-Spots?type=design&node-id=2%3A60&mode=design&t=afgNFybdorZO6cQo-1)
-  
-**Images**  
-  
-The way you'll do this at work is by exporting images directly from Figma — we recommend doing that to practice more. Don't forget to optimize them [here](https://tinypng.com/), so your project loads faster. 
-  
-Good luck and have fun!
+## Description
+
+This is an image sharing site dedicated to showcasing whatever it is you want! Whether it be nature, food, or places you've been, why not show them here! Its function is to be able to share and interact with different users from all walks of life and to post your higlight reel for friends and strangers alike to see.
+
+## Tech Stack
+
+- HTML - The basic structure, the bare bones.
+- CSS - What decorates those bones.
+- Responsive Design - What lets those bones be viewed on multiple devices.
+- BEM - How to organize and structure the project in a way that is easy to identify.
+- Flexbox - Groups elements together and makes them easier to move around
+- Margin - Adds space between elements
+- Padding - ^
+- Fonts - Adds a little pazazz to the text
+- Buttons - Lets the user interact with the page
+- Psuedo Class - Used to modify certain classes with new options
+- Hover Option - Adds a visual aesthetic
+
+## Deployment
+
+This webpage is deployed to GitHub Pages
+
+- Deployment Link: https://dcisxo.github.io/se_project_spots/
