@@ -24,4 +24,8 @@ This is an image sharing site dedicated to showcasing whatever it is you want! W
 
 This webpage is deployed to GitHub Pages
 
-- Deployment Link: https://dcisxo.github.io/se_project_spots/
+- [Deployment Link](https://dcisxo.github.io/se_project_spots/)
+
+## Video Submission
+
+- [Here](https://drive.google.com/file/d/1BD5By438jssI0c1lUMf6Yk9MIFr1wu44/view?usp=sharing)

@@ -1,9 +1,8 @@
 .card__title {
-  margin: 12px 0 0;
+  margin: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  max-width: 353px;
   font-family: Poppins, Arial, Helvetica, sans-serif;
   font-weight: 500;
   font-size: 20px;
@@ -15,10 +14,11 @@
   width: 100%;
   object-fit: cover;
   display: block;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .card__content {
+  margin: 12px 0 0;
   color: rgb(33, 33, 33);
   display: flex;
   justify-content: space-between;
@@ -40,6 +40,12 @@
 }
 
 @media screen and (max-width: 627px) {
+  .card__title {
+    max-width: 353px;
+    font-size: 16px;
+    line-height: 1;
+  }
+
   .card__image {
     height: 288px;
   }
