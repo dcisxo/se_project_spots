@@ -4,7 +4,7 @@
   left: 0;
   bottom: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(33, 33, 33, 0.6);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -67,18 +67,22 @@
   font-weight: 500;
   font-size: 16px;
   line-height: 1.1;
-  opacity: 70%;
+  color: rgba(33, 33, 33, 0.7);
 }
 
 .modal__input {
   padding: 16px 12px;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1;
   border-radius: 8px;
-  opacity: 40%;
+  border-style: 1px;
+  border-color: rgba(33, 33, 33, 0.4);
 }
 
 .modal__input:hover {
-  cursor: pointer;
-  opacity: 100%;
+  cursor: text;
+  border-color: rgba(33, 33, 33, 1);
 }
 
 .modal__submit-btn {
