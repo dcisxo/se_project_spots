@@ -40,6 +40,7 @@
           <ul class="cards__list">
             <template id="card-template">
               <li class="card">
+                <button type="button" class="card__remove-btn"></button>
                 <img
                   src=""
                   alt=""
@@ -62,7 +63,7 @@
           <button type="submit" class="modal__close-btn">
             <img src="./images/close-icon.svg" alt="close icon" />
           </button>
-          <h2 class="modal__title">Edit Profile</h2>
+          <h3 class="modal__title">Edit Profile</h3>
           <form name="edit-profile" class="modal__form">
             <label for="profile-name-input" class="modal__label">
               Name
@@ -84,6 +85,47 @@
             </label>
             <button type="submit" class="modal__submit-btn">Save</button>
           </form>
+        </div>
+      </div>
+      <div class="modal" id="add-card-modal">
+        <div class="modal__container">
+          <button type="submit" class="modal__close-btn">
+            <img src="./images/close-icon.svg" alt="close icon" />
+          </button>
+          <h3 class="modal__title">New Post</h3>
+          <form id="add-card-form" class="modal__form">
+            <label for="add-card-link-input" class="modal__label">
+              Image link
+              <input
+                id="add-card-link-input"
+                type="url"
+                class="modal__input"
+                name="link"
+                placeholder="Paste a link to the picture"
+              />
+            </label>
+            <label for="add-card-name-input" class="modal__label">
+              Caption
+              <input
+                id="add-card-name-input"
+                type="text"
+                name="name"
+                class="modal__input"
+                placeholder="Type your caption"
+              />
+            </label>
+            <button type="submit" class="modal__submit-btn">Save</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="modal modal_opened" id="preview-modal">
+        <div class="modal__content modal__content_type_preview">
+        <button aria-label="Close modal" class="modal__close-btn modal__close-btn_type_preview" type="button">
+
+        </button>
+        <img class="modal__image" src="https://images.unsplash.com/photo-1652150055994-2ca33da6fed6?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt=""/>
+        <p class="modal__caption">Pyramids of Giza</p>
         </div>
       </div>
     </div>

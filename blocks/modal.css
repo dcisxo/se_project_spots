@@ -17,6 +17,10 @@
   visibility: visible;
 }
 
+.modal__image {
+  width: 100%;
+}
+
 .modal__container {
   background-color: #fff;
   padding: 32px 50px;
@@ -28,7 +32,8 @@
 
 .modal__close-btn {
   position: absolute;
-  background-color: #fff;
+  background: transparent url("../images/close-icon.svg") center no-repeat;
+  background-size: 35px 35px;
   border: none;
   top: 32px;
   right: 50px;
@@ -38,6 +43,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.modal__close-btn_type_preview {
+  background-image: url("../images/close-light.svg");
 }
 
 .modal__close-btn:hover {

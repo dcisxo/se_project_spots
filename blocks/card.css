@@ -1,3 +1,7 @@
+.card {
+  position: relative;
+}
+
 .card__title {
   max-width: 353px;
   margin: 0;
@@ -26,18 +30,41 @@
   align-items: center;
 }
 
+.card__remove-btn {
+  position: absolute;
+  background: transparent url(../images/delete-default.svg) center no-repeat;
+  width: 32px;
+  height: 32px;
+  border: none;
+  top: 10px;
+  left: 371px;
+}
+
+.card__remove-btn:hover {
+  cursor: pointer;
+  background-image: url(../images/delete-hover.svg);
+}
+
 .card__like-btn {
-  background-image: url(../images/heart.svg);
+  background: transparent url("../images/like-icon-dark.svg") center no-repeat;
   width: 23px;
   height: 20px;
   border: none;
-  background-color: transparent;
   opacity: 40%;
 }
 
 .card__like-btn:hover {
   cursor: pointer;
-  opacity: 100%;
+  opacity: 1;
+}
+
+.card__like-btn_liked {
+  background-image: url("../images/like-icon-liked.svg");
+  opacity: 1;
+}
+
+.card__like-btn_liked:hover {
+  background-image: url("../images/like-icon-liked-hover.svg");
 }
 
 @media screen and (max-width: 627px) {

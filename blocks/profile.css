@@ -26,8 +26,8 @@
   font-size: 32px;
   line-height: 1;
   text-overflow: ellipsis;
-  overflow: hidden;
   display: -webkit-box;
+  overflow: hidden;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
