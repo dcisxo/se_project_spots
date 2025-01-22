@@ -19,6 +19,22 @@
 
 .modal__image {
   width: 100%;
+  max-width: 80vw;
+  max-height: 80vh;
+  border-radius: 8px;
+  padding: 0;
+}
+
+.modal__caption {
+  background-color: #212121;
+  color: #fff;
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.2;
+  border-radius: 8px;
+  padding: 4px 8px;
+  margin: 0;
 }
 
 .modal__container {
@@ -27,6 +43,12 @@
   max-width: 730px;
   width: 100%;
   box-sizing: border-box;
+  position: relative;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.modal__content {
   position: relative;
 }
 
@@ -47,6 +69,10 @@
 
 .modal__close-btn_type_preview {
   background-image: url("../images/close-light.svg");
+  opacity: 1;
+  position: absolute;
+  top: 0;
+  right: -50px;
 }
 
 .modal__close-btn:hover {
