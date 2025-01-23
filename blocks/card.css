@@ -68,6 +68,10 @@
 }
 
 @media screen and (max-width: 627px) {
+  .card {
+    position: relative;
+  }
+
   .card__title {
     max-width: 228px;
     font-size: 16px;
@@ -76,5 +80,9 @@
 
   .card__image {
     height: 288px;
+  }
+
+  .card__remove-btn {
+    left: 246px;
   }
 }
