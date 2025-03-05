@@ -2,19 +2,19 @@ const initialCards = [
   {
     name: "The Golden Gate Bridge",
     link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/7-photo-by-griffin-wooldridge-from-pexels.jpg",
-    },
+  },
   {
     name: "Time lapse of stars in PR",
     link: "https://images.unsplash.com/photo-1542314490-be9a382dbbb2?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
+  },
   {
     name: "Drip coffee! Yum!",
     link: "https://images.unsplash.com/photo-1617590591232-26315f8482cb?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
+  },
   {
     name: "Bowl of ramen",
     link: "https://images.unsplash.com/photo-1603911036164-f2ef8a24e235?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
+  },
   {
     name: "Doing yoga at sunset",
     link: "https://images.unsplash.com/photo-1516827003699-2880f453d93b?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -26,7 +26,7 @@ const initialCards = [
   {
     name: "One of the Great Pyramids of Giza",
     link: "https://images.unsplash.com/photo-1652150055994-2ca33da6fed6?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
+  },
 ];
 
 //Profile Elements
@@ -79,10 +79,12 @@ function handleAddCardSubmit(evt) {
   cardForm.reset();
   cardsList.prepend(cardElement);
   closeModal(cardModal);
-};
+}
 
 function getCardElement(data) {
-  const cardElement = cardTemplate.content.querySelector(".card").cloneNode(true);
+  const cardElement = cardTemplate.content
+    .querySelector(".card")
+    .cloneNode(true);
   const cardNameEl = cardElement.querySelector(".card__title");
   const cardImageEl = cardElement.querySelector(".card__image");
   const cardLikeBtn = cardElement.querySelector(".card__like-btn");
@@ -92,20 +94,20 @@ function getCardElement(data) {
   cardImageEl.src = data.link;
   cardImageEl.alt = data.name;
 
-cardLikeBtn.addEventListener("click", () => {
-  cardLikeBtn.classList.toggle("card__like-btn_liked");
-});
+  cardLikeBtn.addEventListener("click", () => {
+    cardLikeBtn.classList.toggle("card__like-btn_liked");
+  });
 
-cardRemoveBtn.addEventListener("click", () => {
-  cardElement.remove();
-} )
+  cardRemoveBtn.addEventListener("click", () => {
+    cardElement.remove();
+  });
 
-cardImageEl.addEventListener("click", () => {
-  openModal(previewModal);
-  previewModalCaptionEl.textContent = data.name;
-  previewModalImageEl.src = data.link;
-  previewModalImageEl.alt = data.name;
-});
+  cardImageEl.addEventListener("click", () => {
+    openModal(previewModal);
+    previewModalCaptionEl.textContent = data.name;
+    previewModalImageEl.src = data.link;
+    previewModalImageEl.alt = data.name;
+  });
 
   return cardElement;
 }
@@ -135,7 +137,7 @@ previewModalCloseBtn.addEventListener("click", () => {
 editFormElement.addEventListener("submit", handleEditFormSubmit);
 cardForm.addEventListener("submit", handleAddCardSubmit);
 
-initialCards.forEach(item => {
+initialCards.forEach((item) => {
   const cardElement = getCardElement(item);
   cardsList.append(cardElement);
 });

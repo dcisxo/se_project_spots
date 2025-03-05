@@ -126,6 +126,12 @@
   border-color: rgba(33, 33, 33, 1);
 }
 
+.modal__error {
+  display: block;
+  /* TODO - add correct font sizes */
+  color: #ff0000;
+}
+
 .modal__submit-btn {
   width: 156px;
   padding: 18px 0;
@@ -143,7 +149,6 @@
 @media screen and (max-width: 627px) {
   .modal {
     padding: 0 10px;
-
   }
 
   .modal__image {
