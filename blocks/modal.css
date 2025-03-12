@@ -117,7 +117,8 @@
   font-size: 20px;
   line-height: 1;
   border-radius: 8px;
-  border-style: 1px;
+  border-style: solid;
+  border-width: 1px;
   border-color: rgba(33, 33, 33, 0.4);
 }
 
@@ -132,7 +133,10 @@
 
 .modal__error {
   display: block;
-  /* TODO - add correct font sizes */
+  font-weight: 500;
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.1;
   color: #ff0000;
 }
 
@@ -148,6 +152,10 @@
   cursor: pointer;
   opacity: 90%;
   transition: background-color 0.4s ease-in-out;
+}
+
+.modal__submit-btn:disabled {
+  opacity: 50%;
 }
 
 @media screen and (max-width: 627px) {
