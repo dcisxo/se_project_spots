@@ -144,3 +144,9 @@ initialCards.forEach((item) => {
   const cardElement = getCardElement(item);
   cardsList.append(cardElement);
 });
+
+modal.addEventListener("click", function (evt) {
+  if (evt.target === modal) {
+    closeModal();
+  }
+});
