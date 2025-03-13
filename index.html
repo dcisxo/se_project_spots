@@ -60,11 +60,12 @@
             <img src="./images/close-icon.svg" alt="close icon" />
           </button>
           <h3 class="modal__title">Edit Profile</h3>
-          <form name="edit-profile" class="modal__form" novalidate>
-            <label for="profile-name-input" class="modal__label">
-              Name
-              <input
+      <form name="edit-profile" class="modal__form" novalidate>
+        <label for="profile-name-input" class="modal__label">
+            Name
+            <input
                 id="profile-name-input"
+                name="name"
                 type="text"
                 class="modal__input"
                 placeholder="Type your name"
@@ -78,6 +79,7 @@
               Description
               <input
                 id="profile-desc-input"
+                name="description"
                 type="text"
                 class="modal__input"
                 placeholder="Describe yourself"
@@ -97,7 +99,7 @@
             <img src="./images/close-icon.svg" alt="close icon" />
           </button>
           <h3 class="modal__title">New Post</h3>
-          <form id="add-card-form" class="modal__form" novalidate>
+          <form id="add-card-form" name="add-card" class="modal__form" novalidate>
             <label for="add-card-link-input" class="modal__label">
               Image link
               <input

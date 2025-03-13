@@ -37,13 +37,13 @@ const profileDesc = document.querySelector(".profile__description");
 
 //Form Elements
 const editModal = document.querySelector("#edit-modal");
-const editFormElement = editModal.querySelector(".modal__form");
+const editFormElement = document.forms["edit-profile"];
 const editModalCloseBtn = editModal.querySelector(".modal__close-btn");
 const editModalNameInput = editModal.querySelector("#profile-name-input");
 const editModalDescInput = editModal.querySelector("#profile-desc-input");
 
 const cardModal = document.querySelector("#add-card-modal");
-const cardForm = cardModal.querySelector(".modal__form");
+const cardForm = document.forms["add-card"];
 const cardSubmitBtn = cardModal.querySelector(".modal__submit-btn");
 const cardModalCloseBtn = cardModal.querySelector(".modal__close-btn");
 const cardNameInput = cardModal.querySelector("#add-card-name-input");
@@ -92,10 +92,8 @@ function handleEditFormSubmit(evt) {
 function handleAddCardSubmit(evt) {
   evt.preventDefault();
   const inputValues = { name: cardNameInput.value, link: cardLinkInput.value };
-  const cardElement = getCardElement(inputValues);
+  renderCard(inputValues);
   cardForm.reset();
-  disableButton(cardSubmitBtn, settings);
-  cardsList.prepend(cardElement);
   closeModal(cardModal);
 }
 
@@ -130,6 +128,13 @@ function getCardElement(data) {
   return cardElement;
 }
 
+function renderCard(item, method = "prepend") {
+  const cardElement = getCardElement(item);
+  cardsList[method](cardElement);
+}
+
+initialCards.forEach(item => renderCard(item, "append"));
+
 profileEditButton.addEventListener("click", () => {
   editModalNameInput.value = profileName.textContent;
   editModalDescInput.value = profileDesc.textContent;
@@ -156,7 +161,6 @@ previewModalCloseBtn.addEventListener("click", () => {
 editFormElement.addEventListener("submit", handleEditFormSubmit);
 cardForm.addEventListener("submit", handleAddCardSubmit);
 
-initialCards.forEach((item) => {
-  const cardElement = getCardElement(item);
-  cardsList.append(cardElement);
-});
+
+
+
