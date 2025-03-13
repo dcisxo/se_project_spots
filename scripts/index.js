@@ -138,7 +138,7 @@ initialCards.forEach(item => renderCard(item, "append"));
 profileEditButton.addEventListener("click", () => {
   editModalNameInput.value = profileName.textContent;
   editModalDescInput.value = profileDesc.textContent;
-  resetValidation(editFormElement, [editModalNameInput, editModalDescInput]);
+  resetValidation(editFormElement, [editModalNameInput, editModalDescInput], settings);
   openModal(editModal);
 });
 
@@ -160,7 +160,3 @@ previewModalCloseBtn.addEventListener("click", () => {
 
 editFormElement.addEventListener("submit", handleEditFormSubmit);
 cardForm.addEventListener("submit", handleAddCardSubmit);
-
-
-
-
