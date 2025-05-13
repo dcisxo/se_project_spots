@@ -1,4 +1,12 @@
-import { enableValidation, resetValidation } from './validation.js';
+import "./index.css";
+import logoPath from "../images/logo.svg";
+import pencilPath from "../images/pencil.svg";
+import plusPath from "../images/plus.svg";
+import { enableValidation, resetValidation } from '../scripts/validation.js';
+
+document.querySelector(".header__logo").src = logoPath;
+document.querySelector(".profile__edit-btn img").src = pencilPath;
+document.querySelector(".profile__add-btn img").src = plusPath;
 
 // Validation settings
 const settings = {
