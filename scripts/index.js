@@ -1,3 +1,18 @@
+import { enableValidation, resetValidation } from './validation.js';
+
+// Validation settings
+const settings = {
+  formSelector: ".modal__form",
+  inputSelector: ".modal__input",
+  submitButtonSelector: ".modal__submit-btn",
+  inactiveButtonClass: "modal__submit-btn_disabled",
+  inputErrorClass: "modal__input_type_error",
+  errorClass: "modal__error_visible"
+};
+
+// Enable form validation
+enableValidation(settings);
+
 const initialCards = [
   {
     name: "The Golden Gate Bridge",
@@ -160,3 +175,4 @@ previewModalCloseBtn.addEventListener("click", () => {
 
 editFormElement.addEventListener("submit", handleEditFormSubmit);
 cardForm.addEventListener("submit", handleAddCardSubmit);
+

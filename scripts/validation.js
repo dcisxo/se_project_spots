@@ -86,3 +86,4 @@ const resetValidation = (formEl, inputList, config) => {
 };
 
 enableValidation(settings);
+export { enableValidation, resetValidation, settings };
