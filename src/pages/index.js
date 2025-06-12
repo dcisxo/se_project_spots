@@ -1,14 +1,25 @@
-import "./index.css";
+import "../pages/index.css";
 import logoPath from "../images/logo.svg";
 import pencilPath from "../images/pencil.svg";
 import plusPath from "../images/plus.svg";
 import avatarPath from "../images/avatar.jpg";
+import closeIcon from "../images/close-icon.svg";
 import { enableValidation, resetValidation } from '../scripts/validation.js';
+import Api from "../scripts/Api.js";
+
 
 document.querySelector(".header__logo").src = logoPath;
 document.querySelector(".profile__edit-btn img").src = pencilPath;
 document.querySelector(".profile__add-btn img").src = plusPath;
 document.querySelector(".profile__avatar").src = avatarPath;
+
+const api = new Api({
+  baseUrl: "https://around-api.en.tripleten-services.com/v1",
+  headers: {
+    authorization: "932461a1-5689-412a-b2e1-d7861760d1f6",
+    "Content-Type": "application/json"
+  }
+});
 
 // Validation settings
 const settings = {
@@ -22,37 +33,6 @@ const settings = {
 
 // Enable form validation
 enableValidation(settings);
-
-const initialCards = [
-  {
-    name: "The Golden Gate Bridge",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/7-photo-by-griffin-wooldridge-from-pexels.jpg",
-  },
-  {
-    name: "Time lapse of stars in PR",
-    link: "https://images.unsplash.com/photo-1542314490-be9a382dbbb2?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "Drip coffee! Yum!",
-    link: "https://images.unsplash.com/photo-1617590591232-26315f8482cb?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "Bowl of ramen",
-    link: "https://images.unsplash.com/photo-1603911036164-f2ef8a24e235?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "Doing yoga at sunset",
-    link: "https://images.unsplash.com/photo-1516827003699-2880f453d93b?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "Going back to them old school games",
-    link: "https://images.unsplash.com/photo-1708958624305-8d4c083bdba6?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "One of the Great Pyramids of Giza",
-    link: "https://images.unsplash.com/photo-1652150055994-2ca33da6fed6?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-];
 
 //Profile Elements
 const profileEditButton = document.querySelector(".profile__edit-btn");
@@ -83,6 +63,9 @@ const previewModalCloseBtn = previewModal.querySelector(".modal__close-btn");
 const cardTemplate = document.querySelector("#card-template");
 const cardsList = document.querySelector(".cards__list");
 
+editModalCloseBtn.querySelector("img").src = closeIcon;
+cardModalCloseBtn.querySelector("img").src = closeIcon;
+
 function handleOverlayClick(evt) {
   if (evt.target.classList.contains('modal')) {
     closeModal(evt.target);
@@ -109,17 +92,30 @@ function closeModal(modal) {
 
 function handleEditFormSubmit(evt) {
   evt.preventDefault();
-  profileName.textContent = editModalNameInput.value;
-  profileDesc.textContent = editModalDescInput.value;
-  closeModal(editModal);
+
+  api.editProfile(editModalNameInput.value, editModalDescInput.value)
+    .then((userData) => {
+      profileName.textContent = userData.name;
+      profileDesc.textContent = userData.about;
+      closeModal(editModal);
+    })
+    .catch((err) => {
+      console.error("Error updating profile:", err);
+    });
 }
 
 function handleAddCardSubmit(evt) {
   evt.preventDefault();
-  const inputValues = { name: cardNameInput.value, link: cardLinkInput.value };
-  renderCard(inputValues);
-  cardForm.reset();
-  closeModal(cardModal);
+
+  api.addCard(cardNameInput.value, cardLinkInput.value)
+    .then((cardData) => {
+      renderCard(cardData);
+      cardForm.reset();
+      closeModal(cardModal);
+    })
+    .catch((err) => {
+      console.error("Error adding card:", err);
+    });
 }
 
 function getCardElement(data) {
@@ -135,12 +131,35 @@ function getCardElement(data) {
   cardImageEl.src = data.link;
   cardImageEl.alt = data.name;
 
+  // Check if card is liked by current user
+  if (data.isLiked) {
+    cardLikeBtn.classList.add("card__like-btn_liked");
+  }
+
   cardLikeBtn.addEventListener("click", () => {
-    cardLikeBtn.classList.toggle("card__like-btn_liked");
+    const isLiked = cardLikeBtn.classList.contains("card__like-btn_liked");
+
+    if (isLiked) {
+      api.dislikeCard(data._id)
+        .then(() => {
+          cardLikeBtn.classList.remove("card__like-btn_liked");
+        })
+        .catch((err) => console.error("Error disliking card:", err));
+    } else {
+      api.likeCard(data._id)
+        .then(() => {
+          cardLikeBtn.classList.add("card__like-btn_liked");
+        })
+        .catch((err) => console.error("Error liking card:", err));
+    }
   });
 
   cardRemoveBtn.addEventListener("click", () => {
-    cardElement.remove();
+    api.deleteCard(data._id)
+      .then(() => {
+        cardElement.remove();
+      })
+      .catch((err) => console.error("Error deleting card:", err));
   });
 
   cardImageEl.addEventListener("click", () => {
@@ -158,7 +177,20 @@ function renderCard(item, method = "prepend") {
   cardsList[method](cardElement);
 }
 
-initialCards.forEach(item => renderCard(item, "append"));
+Promise.all([api.getUserInfo(), api.getInitialCards()])
+  .then(([userData, cards]) => {
+    // Update profile with user data
+    profileName.textContent = userData.name;
+    profileDesc.textContent = userData.about;
+
+    // Render cards from server
+    cards.forEach(cardData => {
+      renderCard(cardData, "append");
+    });
+  })
+  .catch((err) => {
+    console.error("Error loading initial data:", err);
+  });
 
 profileEditButton.addEventListener("click", () => {
   editModalNameInput.value = profileName.textContent;
