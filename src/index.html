@@ -141,5 +141,41 @@
         <p class="modal__caption"></p>
       </div>
     </div>
+  <div class="modal" id="delete-card-modal">
+        <div class="modal__container modal__container_type_confirm">
+          <button type="button" class="modal__close-btn">
+            <img src="./images/close-icon.svg" alt="close icon" />
+          </button>
+          <h3 class="modal__title">Are you sure?</h3>
+          <form id="delete-card-form" name="delete-card" class="modal__form" novalidate>
+            <button type="submit" class="modal__submit-btn modal__submit-btn_type_confirm">Yes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+      <div class="modal" id="avatar-modal">
+        <div class="modal__container">
+          <button type="button" class="modal__close-btn">
+            <img src="./images/close-icon.svg" alt="close icon" />
+          </button>
+          <h3 class="modal__title">Change profile picture</h3>
+          <form id="avatar-form" name="avatar" class="modal__form" novalidate>
+            <label for="avatar-link-input" class="modal__label">
+              Image link
+              <input
+                id="avatar-link-input"
+                type="url"
+                class="modal__input"
+                name="avatar"
+                placeholder="Image URL"
+                required
+              />
+              <span id="avatar-link-input-error" class="modal__error"></span>
+            </label>
+            <button type="submit" class="modal__submit-btn">Save</button>
+          </form>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

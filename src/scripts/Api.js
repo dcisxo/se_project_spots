@@ -38,6 +38,16 @@ class Api {
     });
   }
 
+  editAvatar(avatar) {
+  return this._request(`${this._baseUrl}/users/me/avatar`, {
+    method: "PATCH",
+    headers: this._headers,
+    body: JSON.stringify({
+      avatar: avatar,
+    }),
+  });
+}
+
   addCard(name, link) {
     return this._request(`${this._baseUrl}/cards`, {
       method: "POST",
