@@ -66,19 +66,19 @@ class Api {
     });
   }
 
-  likeCard(cardId) {
-    return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
-      method: "PUT",
-      headers: this._headers,
-    });
-  }
+likeCard(cardId) {
+  return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
+    method: "PUT",
+    headers: this._headers,
+  });
+}
 
-  dislikeCard(cardId) {
-    return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
-      method: "DELETE",
-      headers: this._headers,
-    });
-  }
+dislikeCard(cardId) {
+  return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
+    method: "DELETE",
+    headers: this._headers,
+  });
+}
 }
 
 export default Api;

@@ -108,6 +108,9 @@ function closeModal(modal) {
 
 function handleEditFormSubmit(evt) {
   evt.preventDefault();
+  const submitButton = editFormElement.querySelector(".modal__submit-btn");
+
+  renderLoading(true, submitButton, "Save", "Saving...");
 
   api.editProfile(editModalNameInput.value, editModalDescInput.value)
     .then((userData) => {
@@ -117,11 +120,17 @@ function handleEditFormSubmit(evt) {
     })
     .catch((err) => {
       console.error("Error updating profile:", err);
+    })
+    .finally(() => {
+      renderLoading(false, submitButton, "Save");
     });
 }
 
 function handleAddCardSubmit(evt) {
   evt.preventDefault();
+  const submitButton = cardForm.querySelector(".modal__submit-btn");
+
+  renderLoading(true, submitButton, "Save", "Saving...");
 
   api.addCard(cardNameInput.value, cardLinkInput.value)
     .then((cardData) => {
@@ -131,6 +140,9 @@ function handleAddCardSubmit(evt) {
     })
     .catch((err) => {
       console.error("Error adding card:", err);
+    })
+    .finally(() => {
+      renderLoading(false, submitButton, "Save");
     });
 }
 
@@ -154,31 +166,38 @@ function getCardElement(data) {
   }
 
   // Only show delete button if current user owns the card (add safety check)
-  if (data.owner && data.owner._id !== currentUser._id) {
-    cardRemoveBtn.style.display = "none";
+  if (data.owner !== currentUser._id) {
+  cardRemoveBtn.style.display = "none";
+}
+
+cardLikeBtn.addEventListener("click", () => {
+  const isCurrentlyLiked = cardLikeBtn.classList.contains("card__like-btn_liked");
+
+  // Disable button during request
+  cardLikeBtn.disabled = true;
+
+  if (isCurrentlyLiked) {
+    api.dislikeCard(data._id)
+      .then((updatedCard) => {
+        cardLikeBtn.classList.remove("card__like-btn_liked");
+        data.likes = updatedCard.likes;
+      })
+      .catch((err) => console.error("Error disliking card:", err))
+      .finally(() => {
+        cardLikeBtn.disabled = false;
+      });
+  } else {
+    api.likeCard(data._id)
+      .then((updatedCard) => {
+        cardLikeBtn.classList.add("card__like-btn_liked");
+        data.likes = updatedCard.likes;
+      })
+      .catch((err) => console.error("Error liking card:", err))
+      .finally(() => {
+        cardLikeBtn.disabled = false;
+      });
   }
-
-  cardLikeBtn.addEventListener("click", () => {
-    const isCurrentlyLiked = cardLikeBtn.classList.contains("card__like-btn_liked");
-
-    if (isCurrentlyLiked) {
-      api.dislikeCard(data._id)
-        .then((updatedCard) => {
-          cardLikeBtn.classList.remove("card__like-btn_liked");
-          // Update the data object with new likes array
-          data.likes = updatedCard.likes;
-        })
-        .catch((err) => console.error("Error disliking card:", err));
-    } else {
-      api.likeCard(data._id)
-        .then((updatedCard) => {
-          cardLikeBtn.classList.add("card__like-btn_liked");
-          // Update the data object with new likes array
-          data.likes = updatedCard.likes;
-        })
-        .catch((err) => console.error("Error liking card:", err));
-    }
-  });
+});
 
   cardRemoveBtn.addEventListener("click", () => {
     selectedCard = cardElement;
@@ -221,8 +240,11 @@ Promise.all([api.getUserInfo(), api.getInitialCards()])
     console.error("Error loading initial data:", err);
   });
 
-  function handleDeleteSubmit(evt) {
+function handleDeleteSubmit(evt) {
   evt.preventDefault();
+  const submitButton = deleteForm.querySelector(".modal__submit-btn");
+
+  renderLoading(true, submitButton, "Yes", "Deleting...");
 
   api.deleteCard(selectedCardId)
     .then(() => {
@@ -233,11 +255,17 @@ Promise.all([api.getUserInfo(), api.getInitialCards()])
     })
     .catch((err) => {
       console.error("Error deleting card:", err);
+    })
+    .finally(() => {
+      renderLoading(false, submitButton, "Yes");
     });
 }
 
 function handleAvatarSubmit(evt) {
   evt.preventDefault();
+  const submitButton = avatarForm.querySelector(".modal__submit-btn");
+
+  renderLoading(true, submitButton, "Save", "Saving...");
 
   api.editAvatar(avatarLinkInput.value)
     .then((userData) => {
@@ -247,7 +275,18 @@ function handleAvatarSubmit(evt) {
     })
     .catch((err) => {
       console.error("Error updating avatar:", err);
+    })
+    .finally(() => {
+      renderLoading(false, submitButton, "Save");
     });
+}
+
+function renderLoading(isLoading, button, defaultText = "Save", loadingText = "Saving...") {
+  if (isLoading) {
+    button.textContent = loadingText;
+  } else {
+    button.textContent = defaultText;
+  }
 }
 
 profileEditButton.addEventListener("click", () => {
@@ -262,6 +301,7 @@ editModalCloseBtn.addEventListener("click", () => {
 });
 
 cardEditButton.addEventListener("click", () => {
+  resetValidation(cardForm, [cardNameInput, cardLinkInput], settings);
   openModal(cardModal);
 });
 
@@ -278,6 +318,7 @@ deleteModalCloseBtn.addEventListener("click", () => {
 });
 
 profileAvatar.addEventListener("click", () => {
+  resetValidation(avatarForm, [avatarLinkInput], settings);
   openModal(avatarModal);
 });
 
