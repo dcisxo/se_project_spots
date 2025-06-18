@@ -72,6 +72,7 @@ const cardsList = document.querySelector(".cards__list");
 const deleteModal = document.querySelector("#delete-card-modal");
 const deleteForm = document.forms["delete-card"];
 const deleteModalCloseBtn = deleteModal.querySelector(".modal__close-btn");
+const deleteModalCancelBtn = deleteModal.querySelector(".modal__cancel-btn");
 
 editModalCloseBtn.querySelector("img").src = closeIcon;
 cardModalCloseBtn.querySelector("img").src = closeIcon;
@@ -244,7 +245,7 @@ function handleDeleteSubmit(evt) {
   evt.preventDefault();
   const submitButton = deleteForm.querySelector(".modal__submit-btn");
 
-  renderLoading(true, submitButton, "Yes", "Deleting...");
+  renderLoading(true, submitButton, "Delete", "Deleting...");
 
   api.deleteCard(selectedCardId)
     .then(() => {
@@ -257,7 +258,7 @@ function handleDeleteSubmit(evt) {
       console.error("Error deleting card:", err);
     })
     .finally(() => {
-      renderLoading(false, submitButton, "Yes");
+      renderLoading(false, submitButton, "Delete");
     });
 }
 
@@ -314,6 +315,10 @@ previewModalCloseBtn.addEventListener("click", () => {
 });
 
 deleteModalCloseBtn.addEventListener("click", () => {
+  closeModal(deleteModal);
+});
+
+deleteModalCancelBtn.addEventListener("click", () => {
   closeModal(deleteModal);
 });
 
