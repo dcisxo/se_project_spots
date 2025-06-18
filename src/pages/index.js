@@ -322,7 +322,8 @@ deleteModalCancelBtn.addEventListener("click", () => {
   closeModal(deleteModal);
 });
 
-profileAvatar.addEventListener("click", () => {
+const profileAvatarContainer = document.querySelector(".profile__avatar-container");
+profileAvatarContainer.addEventListener("click", () => {
   resetValidation(avatarForm, [avatarLinkInput], settings);
   openModal(avatarModal);
 });
