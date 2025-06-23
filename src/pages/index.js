@@ -1,14 +1,27 @@
-import "./index.css";
+import "../pages/index.css";
 import logoPath from "../images/logo.svg";
 import pencilPath from "../images/pencil.svg";
 import plusPath from "../images/plus.svg";
 import avatarPath from "../images/avatar.jpg";
+import closeIcon from "../images/close-icon.svg";
 import { enableValidation, resetValidation } from '../scripts/validation.js';
+import Api from "../scripts/Api.js";
+import { renderLoading, handleSubmit } from '../scripts/utils.js';
+
+const profileAvatar = document.querySelector(".profile__avatar");
 
 document.querySelector(".header__logo").src = logoPath;
 document.querySelector(".profile__edit-btn img").src = pencilPath;
 document.querySelector(".profile__add-btn img").src = plusPath;
-document.querySelector(".profile__avatar").src = avatarPath;
+profileAvatar.src = avatarPath;
+
+const api = new Api({
+  baseUrl: "https://around-api.en.tripleten-services.com/v1",
+  headers: {
+    authorization: "932461a1-5689-412a-b2e1-d7861760d1f6",
+    "Content-Type": "application/json"
+  }
+});
 
 // Validation settings
 const settings = {
@@ -22,37 +35,6 @@ const settings = {
 
 // Enable form validation
 enableValidation(settings);
-
-const initialCards = [
-  {
-    name: "The Golden Gate Bridge",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/software-engineer/spots/7-photo-by-griffin-wooldridge-from-pexels.jpg",
-  },
-  {
-    name: "Time lapse of stars in PR",
-    link: "https://images.unsplash.com/photo-1542314490-be9a382dbbb2?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "Drip coffee! Yum!",
-    link: "https://images.unsplash.com/photo-1617590591232-26315f8482cb?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "Bowl of ramen",
-    link: "https://images.unsplash.com/photo-1603911036164-f2ef8a24e235?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "Doing yoga at sunset",
-    link: "https://images.unsplash.com/photo-1516827003699-2880f453d93b?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "Going back to them old school games",
-    link: "https://images.unsplash.com/photo-1708958624305-8d4c083bdba6?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    name: "One of the Great Pyramids of Giza",
-    link: "https://images.unsplash.com/photo-1652150055994-2ca33da6fed6?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-];
 
 //Profile Elements
 const profileEditButton = document.querySelector(".profile__edit-btn");
@@ -79,9 +61,28 @@ const previewModalImageEl = previewModal.querySelector(".modal__image");
 const previewModalCaptionEl = previewModal.querySelector(".modal__caption");
 const previewModalCloseBtn = previewModal.querySelector(".modal__close-btn");
 
+const avatarModal = document.querySelector("#avatar-modal");
+const avatarForm = document.forms["avatar"];
+const avatarModalCloseBtn = avatarModal.querySelector(".modal__close-btn");
+const avatarLinkInput = avatarModal.querySelector("#avatar-link-input");
+
 // Card related elements
 const cardTemplate = document.querySelector("#card-template");
 const cardsList = document.querySelector(".cards__list");
+
+const deleteModal = document.querySelector("#delete-card-modal");
+const deleteForm = document.forms["delete-card"];
+const deleteModalCloseBtn = deleteModal.querySelector(".modal__close-btn");
+const deleteModalCancelBtn = deleteModal.querySelector(".modal__cancel-btn");
+
+editModalCloseBtn.querySelector("img").src = closeIcon;
+cardModalCloseBtn.querySelector("img").src = closeIcon;
+deleteModalCloseBtn.querySelector("img").src = closeIcon;
+avatarModalCloseBtn.querySelector("img").src = closeIcon;
+
+let currentUser = {};
+let selectedCard;
+let selectedCardId;
 
 function handleOverlayClick(evt) {
   if (evt.target.classList.contains('modal')) {
@@ -108,18 +109,29 @@ function closeModal(modal) {
 }
 
 function handleEditFormSubmit(evt) {
-  evt.preventDefault();
-  profileName.textContent = editModalNameInput.value;
-  profileDesc.textContent = editModalDescInput.value;
-  closeModal(editModal);
+  function makeRequest() {
+    return api.editProfile(editModalNameInput.value, editModalDescInput.value)
+      .then((userData) => {
+        profileName.textContent = userData.name;
+        profileDesc.textContent = userData.about;
+        closeModal(editModal);
+      });
+  }
+
+  handleSubmit(makeRequest, evt, "Saving...");
 }
 
 function handleAddCardSubmit(evt) {
-  evt.preventDefault();
-  const inputValues = { name: cardNameInput.value, link: cardLinkInput.value };
-  renderCard(inputValues);
-  cardForm.reset();
-  closeModal(cardModal);
+  function makeRequest() {
+    return api.addCard(cardNameInput.value, cardLinkInput.value)
+      .then((cardData) => {
+        renderCard(cardData);
+        // Form reset is handled by handleSubmit
+        closeModal(cardModal);
+      });
+  }
+
+  handleSubmit(makeRequest, evt, "Saving...");
 }
 
 function getCardElement(data) {
@@ -135,12 +147,61 @@ function getCardElement(data) {
   cardImageEl.src = data.link;
   cardImageEl.alt = data.name;
 
-  cardLikeBtn.addEventListener("click", () => {
-    cardLikeBtn.classList.toggle("card__like-btn_liked");
-  });
+  // Check if current user has liked this card
+  // Using the isLiked property directly from the API response
+  const isLiked = data.isLiked;
+  if (isLiked) {
+    cardLikeBtn.classList.add("card__like-btn_liked");
+  }
+
+  // Only show delete button if current user owns the card
+  // The API returns owner as an object with _id property
+  let cardOwnerId;
+  if (data.owner && typeof data.owner === 'object' && data.owner._id) {
+    cardOwnerId = data.owner._id;
+  } else {
+    cardOwnerId = data.owner;
+  }
+
+  if (cardOwnerId !== currentUser._id) {
+    cardRemoveBtn.style.display = "none";
+  }
+
+cardLikeBtn.addEventListener("click", () => {
+  const isCurrentlyLiked = cardLikeBtn.classList.contains("card__like-btn_liked");
+
+  // Disable button during request
+  cardLikeBtn.disabled = true;
+
+  if (isCurrentlyLiked) {
+    api.dislikeCard(data._id)
+      .then((updatedCard) => {
+        cardLikeBtn.classList.remove("card__like-btn_liked");
+        data.likes = updatedCard.likes;
+        data.isLiked = false; // Update the isLiked property
+      })
+      .catch((err) => console.error("Error disliking card:", err))
+      .finally(() => {
+        cardLikeBtn.disabled = false;
+      });
+  } else {
+    api.likeCard(data._id)
+      .then((updatedCard) => {
+        cardLikeBtn.classList.add("card__like-btn_liked");
+        data.likes = updatedCard.likes;
+        data.isLiked = true; // Update the isLiked property
+      })
+      .catch((err) => console.error("Error liking card:", err))
+      .finally(() => {
+        cardLikeBtn.disabled = false;
+      });
+  }
+});
 
   cardRemoveBtn.addEventListener("click", () => {
-    cardElement.remove();
+    selectedCard = cardElement;
+    selectedCardId = data._id;
+    openModal(deleteModal);
   });
 
   cardImageEl.addEventListener("click", () => {
@@ -158,7 +219,54 @@ function renderCard(item, method = "prepend") {
   cardsList[method](cardElement);
 }
 
-initialCards.forEach(item => renderCard(item, "append"));
+Promise.all([api.getUserInfo(), api.getInitialCards()])
+  .then(([userData, cards]) => {
+    // Store current user data
+    currentUser = userData;
+
+    // Update profile with user data
+    profileName.textContent = userData.name;
+    profileDesc.textContent = userData.about;
+    // Update avatar from server data
+    profileAvatar.src = userData.avatar;
+
+    // Render cards from server - ensure we have current user info first
+    cards.forEach(cardData => {
+      renderCard(cardData, "append");
+    });
+  })
+  .catch((err) => {
+    console.error("Error loading initial data:", err);
+  });
+
+function handleDeleteSubmit(evt) {
+  function makeRequest() {
+    return api.deleteCard(selectedCardId)
+      .then(() => {
+        selectedCard.remove();
+        closeModal(deleteModal);
+        selectedCard = null;
+        selectedCardId = null;
+      });
+  }
+
+  handleSubmit(makeRequest, evt, "Deleting...");
+}
+
+function handleAvatarSubmit(evt) {
+  function makeRequest() {
+    return api.editAvatar(avatarLinkInput.value)
+      .then((userData) => {
+        profileAvatar.src = userData.avatar;
+        // Form reset is handled by handleSubmit
+        closeModal(avatarModal);
+      });
+  }
+
+  handleSubmit(makeRequest, evt, "Saving...");
+}
+
+// renderLoading function moved to utils.js
 
 profileEditButton.addEventListener("click", () => {
   editModalNameInput.value = profileName.textContent;
@@ -172,6 +280,7 @@ editModalCloseBtn.addEventListener("click", () => {
 });
 
 cardEditButton.addEventListener("click", () => {
+  resetValidation(cardForm, [cardNameInput, cardLinkInput], settings);
   openModal(cardModal);
 });
 
@@ -183,6 +292,26 @@ previewModalCloseBtn.addEventListener("click", () => {
   closeModal(previewModal);
 });
 
+deleteModalCloseBtn.addEventListener("click", () => {
+  closeModal(deleteModal);
+});
+
+deleteModalCancelBtn.addEventListener("click", () => {
+  closeModal(deleteModal);
+});
+
+const profileAvatarContainer = document.querySelector(".profile__avatar-container");
+profileAvatarContainer.addEventListener("click", () => {
+  resetValidation(avatarForm, [avatarLinkInput], settings);
+  openModal(avatarModal);
+});
+
+avatarModalCloseBtn.addEventListener("click", () => {
+  closeModal(avatarModal);
+});
+
+avatarForm.addEventListener("submit", handleAvatarSubmit);
+deleteForm.addEventListener("submit", handleDeleteSubmit);
 editFormElement.addEventListener("submit", handleEditFormSubmit);
 cardForm.addEventListener("submit", handleAddCardSubmit);
 
