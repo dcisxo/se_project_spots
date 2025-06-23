@@ -6,12 +6,14 @@ import avatarPath from "../images/avatar.jpg";
 import closeIcon from "../images/close-icon.svg";
 import { enableValidation, resetValidation } from '../scripts/validation.js';
 import Api from "../scripts/Api.js";
+import { renderLoading, handleSubmit } from '../scripts/utils.js';
 
+const profileAvatar = document.querySelector(".profile__avatar");
 
 document.querySelector(".header__logo").src = logoPath;
 document.querySelector(".profile__edit-btn img").src = pencilPath;
 document.querySelector(".profile__add-btn img").src = plusPath;
-document.querySelector(".profile__avatar").src = avatarPath;
+profileAvatar.src = avatarPath;
 
 const api = new Api({
   baseUrl: "https://around-api.en.tripleten-services.com/v1",
@@ -63,7 +65,6 @@ const avatarModal = document.querySelector("#avatar-modal");
 const avatarForm = document.forms["avatar"];
 const avatarModalCloseBtn = avatarModal.querySelector(".modal__close-btn");
 const avatarLinkInput = avatarModal.querySelector("#avatar-link-input");
-const profileAvatar = document.querySelector(".profile__avatar");
 
 // Card related elements
 const cardTemplate = document.querySelector("#card-template");
@@ -108,43 +109,29 @@ function closeModal(modal) {
 }
 
 function handleEditFormSubmit(evt) {
-  evt.preventDefault();
-  const submitButton = editFormElement.querySelector(".modal__submit-btn");
+  function makeRequest() {
+    return api.editProfile(editModalNameInput.value, editModalDescInput.value)
+      .then((userData) => {
+        profileName.textContent = userData.name;
+        profileDesc.textContent = userData.about;
+        closeModal(editModal);
+      });
+  }
 
-  renderLoading(true, submitButton, "Save", "Saving...");
-
-  api.editProfile(editModalNameInput.value, editModalDescInput.value)
-    .then((userData) => {
-      profileName.textContent = userData.name;
-      profileDesc.textContent = userData.about;
-      closeModal(editModal);
-    })
-    .catch((err) => {
-      console.error("Error updating profile:", err);
-    })
-    .finally(() => {
-      renderLoading(false, submitButton, "Save");
-    });
+  handleSubmit(makeRequest, evt, "Saving...");
 }
 
 function handleAddCardSubmit(evt) {
-  evt.preventDefault();
-  const submitButton = cardForm.querySelector(".modal__submit-btn");
+  function makeRequest() {
+    return api.addCard(cardNameInput.value, cardLinkInput.value)
+      .then((cardData) => {
+        renderCard(cardData);
+        // Form reset is handled by handleSubmit
+        closeModal(cardModal);
+      });
+  }
 
-  renderLoading(true, submitButton, "Save", "Saving...");
-
-  api.addCard(cardNameInput.value, cardLinkInput.value)
-    .then((cardData) => {
-      renderCard(cardData);
-      cardForm.reset();
-      closeModal(cardModal);
-    })
-    .catch((err) => {
-      console.error("Error adding card:", err);
-    })
-    .finally(() => {
-      renderLoading(false, submitButton, "Save");
-    });
+  handleSubmit(makeRequest, evt, "Saving...");
 }
 
 function getCardElement(data) {
@@ -160,16 +147,25 @@ function getCardElement(data) {
   cardImageEl.src = data.link;
   cardImageEl.alt = data.name;
 
-  // Check if current user has liked this card (add safety check for likes array)
-  const isLiked = data.likes && data.likes.some(user => user._id === currentUser._id);
+  // Check if current user has liked this card
+  // Using the isLiked property directly from the API response
+  const isLiked = data.isLiked;
   if (isLiked) {
     cardLikeBtn.classList.add("card__like-btn_liked");
   }
 
-  // Only show delete button if current user owns the card (add safety check)
-  if (data.owner !== currentUser._id) {
-  cardRemoveBtn.style.display = "none";
-}
+  // Only show delete button if current user owns the card
+  // The API returns owner as an object with _id property
+  let cardOwnerId;
+  if (data.owner && typeof data.owner === 'object' && data.owner._id) {
+    cardOwnerId = data.owner._id;
+  } else {
+    cardOwnerId = data.owner;
+  }
+
+  if (cardOwnerId !== currentUser._id) {
+    cardRemoveBtn.style.display = "none";
+  }
 
 cardLikeBtn.addEventListener("click", () => {
   const isCurrentlyLiked = cardLikeBtn.classList.contains("card__like-btn_liked");
@@ -182,6 +178,7 @@ cardLikeBtn.addEventListener("click", () => {
       .then((updatedCard) => {
         cardLikeBtn.classList.remove("card__like-btn_liked");
         data.likes = updatedCard.likes;
+        data.isLiked = false; // Update the isLiked property
       })
       .catch((err) => console.error("Error disliking card:", err))
       .finally(() => {
@@ -192,6 +189,7 @@ cardLikeBtn.addEventListener("click", () => {
       .then((updatedCard) => {
         cardLikeBtn.classList.add("card__like-btn_liked");
         data.likes = updatedCard.likes;
+        data.isLiked = true; // Update the isLiked property
       })
       .catch((err) => console.error("Error liking card:", err))
       .finally(() => {
@@ -230,9 +228,9 @@ Promise.all([api.getUserInfo(), api.getInitialCards()])
     profileName.textContent = userData.name;
     profileDesc.textContent = userData.about;
     // Update avatar from server data
-    document.querySelector(".profile__avatar").src = userData.avatar;
+    profileAvatar.src = userData.avatar;
 
-    // Render cards from server
+    // Render cards from server - ensure we have current user info first
     cards.forEach(cardData => {
       renderCard(cardData, "append");
     });
@@ -242,53 +240,33 @@ Promise.all([api.getUserInfo(), api.getInitialCards()])
   });
 
 function handleDeleteSubmit(evt) {
-  evt.preventDefault();
-  const submitButton = deleteForm.querySelector(".modal__submit-btn");
+  function makeRequest() {
+    return api.deleteCard(selectedCardId)
+      .then(() => {
+        selectedCard.remove();
+        closeModal(deleteModal);
+        selectedCard = null;
+        selectedCardId = null;
+      });
+  }
 
-  renderLoading(true, submitButton, "Delete", "Deleting...");
-
-  api.deleteCard(selectedCardId)
-    .then(() => {
-      selectedCard.remove();
-      closeModal(deleteModal);
-      selectedCard = null;
-      selectedCardId = null;
-    })
-    .catch((err) => {
-      console.error("Error deleting card:", err);
-    })
-    .finally(() => {
-      renderLoading(false, submitButton, "Delete");
-    });
+  handleSubmit(makeRequest, evt, "Deleting...");
 }
 
 function handleAvatarSubmit(evt) {
-  evt.preventDefault();
-  const submitButton = avatarForm.querySelector(".modal__submit-btn");
-
-  renderLoading(true, submitButton, "Save", "Saving...");
-
-  api.editAvatar(avatarLinkInput.value)
-    .then((userData) => {
-      profileAvatar.src = userData.avatar;
-      avatarForm.reset();
-      closeModal(avatarModal);
-    })
-    .catch((err) => {
-      console.error("Error updating avatar:", err);
-    })
-    .finally(() => {
-      renderLoading(false, submitButton, "Save");
-    });
-}
-
-function renderLoading(isLoading, button, defaultText = "Save", loadingText = "Saving...") {
-  if (isLoading) {
-    button.textContent = loadingText;
-  } else {
-    button.textContent = defaultText;
+  function makeRequest() {
+    return api.editAvatar(avatarLinkInput.value)
+      .then((userData) => {
+        profileAvatar.src = userData.avatar;
+        // Form reset is handled by handleSubmit
+        closeModal(avatarModal);
+      });
   }
+
+  handleSubmit(makeRequest, evt, "Saving...");
 }
+
+// renderLoading function moved to utils.js
 
 profileEditButton.addEventListener("click", () => {
   editModalNameInput.value = profileName.textContent;
