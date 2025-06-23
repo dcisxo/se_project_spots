@@ -1,3 +1,12 @@
 .DS_Store
 node_modules/
 dist/
+
+# Environment variables and secrets
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+config.js
+secrets.js
