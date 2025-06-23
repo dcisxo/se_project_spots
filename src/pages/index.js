@@ -6,6 +6,7 @@ import avatarPath from "../images/avatar.jpg";
 import closeIcon from "../images/close-icon.svg";
 import { enableValidation, resetValidation } from '../scripts/validation.js';
 import Api from "../scripts/Api.js";
+import { API_CONFIG } from '../scripts/config.js';
 import { renderLoading, handleSubmit } from '../scripts/utils.js';
 
 const profileAvatar = document.querySelector(".profile__avatar");
@@ -15,13 +16,9 @@ document.querySelector(".profile__edit-btn img").src = pencilPath;
 document.querySelector(".profile__add-btn img").src = plusPath;
 profileAvatar.src = avatarPath;
 
-const api = new Api({
-  baseUrl: "https://around-api.en.tripleten-services.com/v1",
-  headers: {
-    authorization: "932461a1-5689-412a-b2e1-d7861760d1f6",
-    "Content-Type": "application/json"
-  }
-});
+// Using API configuration from config.js
+// For security, the actual API key is stored in a separate file not committed to git
+const api = new Api(API_CONFIG);
 
 // Validation settings
 const settings = {
